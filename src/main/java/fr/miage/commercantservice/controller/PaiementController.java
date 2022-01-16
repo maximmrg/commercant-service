@@ -2,7 +2,6 @@ package fr.miage.commercantservice.controller;
 
 import fr.miage.commercantservice.input.PaiementInput;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
@@ -15,15 +14,17 @@ import org.springframework.cloud.loadbalancer.support.LoadBalancerClientFactory;
 import javax.validation.Valid;
 
 
-import javax.validation.Valid;
-
 @RestController
 @RequestMapping(value = "/paiements", produces = MediaType.APPLICATION_JSON_VALUE)
-@RequiredArgsConstructor
 public class PaiementController {
 
     RestTemplate template;
     LoadBalancerClientFactory clientFactory;
+
+    public PaiementController(RestTemplate template, LoadBalancerClientFactory clientFactory) {
+        this.template = template;
+        this.clientFactory = clientFactory;
+    }
 
     @PostMapping
     @CircuitBreaker(name = "commercant-service", fallbackMethod = "fallbackPaiementCall")
@@ -41,7 +42,8 @@ public class PaiementController {
         return response;
     }
 
-    private PaiementInput fallbackPaiementCall(RuntimeException e) {
+    private PaiementInput fallbackPaiementCall(RuntimeException runEx) {
+        runEx.printStackTrace();
         return new PaiementInput("Echec");
     }
 }
