@@ -1,19 +1,22 @@
 package fr.miage.commercantservice.configuration;
 
 import fr.miage.commercantservice.CommercantServiceApplication;
-import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.cloud.loadbalancer.annotation.LoadBalancerClient;
+import org.springframework.cloud.loadbalancer.core.RoundRobinLoadBalancer;
+import org.springframework.cloud.loadbalancer.core.ServiceInstanceListSupplier;
+import org.springframework.cloud.loadbalancer.support.LoadBalancerClientFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.web.reactive.function.client.WebClient;
 
 @Configuration
 @LoadBalancerClient(name = "commerce", configuration = CommercantServiceApplication.class)
 public class WebClientConfig {
 
-    @LoadBalanced
     @Bean
-    WebClient.Builder webClientBuilder(){
-        return WebClient.builder();
+    public RoundRobinLoadBalancer roundRobinLoadBalancer(LoadBalancerClientFactory clientFactory, Environment environment) {
+        String serviceId = clientFactory.getName(environment);
+        return new RoundRobinLoadBalancer(clientFactory.getLazyProvider(serviceId, ServiceInstanceListSupplier.class), serviceId, -1);
     }
 }
