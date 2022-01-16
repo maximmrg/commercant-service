@@ -21,7 +21,7 @@ public class PaiementInput {
 
     private String numCarte;
 
-    private Date expCarte;
+    private String expCarte;
 
     private String crypto;
 

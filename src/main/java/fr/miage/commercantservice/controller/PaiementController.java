@@ -1,20 +1,19 @@
 package fr.miage.commercantservice.controller;
 
 import fr.miage.commercantservice.input.PaiementInput;
-import fr.miage.commercantservice.validator.PaiementValidator;
-import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.*;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
+
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.loadbalancer.core.RoundRobinLoadBalancer;
 import org.springframework.cloud.loadbalancer.support.LoadBalancerClientFactory;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
+
+import javax.validation.Valid;
+
 
 import javax.validation.Valid;
 
@@ -42,7 +41,7 @@ public class PaiementController {
         return response;
     }
 
-    private PaiementInput fallBackPaiementCall(RuntimeException e) {
+    private PaiementInput fallbackPaiementCall(RuntimeException e) {
         return new PaiementInput("Echec");
     }
 }
